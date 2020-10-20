@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<!--
+    模板编译原理: AST语法树  先表示出 html 来, 再把 html -> js 语法
+
+    1. 需要将 模板变成一个 render 方法
+    2. 需要去当前的实例上取值 with
+    3. 虚拟 dom =>  说白了就是一个对象 虚拟dom的好处就是 : 可以描述 dom 结构
+    4. 生成 真实的 dom 结构 扔到 页面中
+
+-->
+<div id="app">
+    <div style="color:red;">
+        <span>{{name}}</span>
+    </div>
+</div>
+<script type="text/javascript" src="/dist/vue.js"></script>
+<script type="text/javascript">
+    // 响应式数据变化, 数据代理 Object.defineProperty
+    const vm = new Vue({ // Vue2 是 基于 options API的, 这些 API在Vue3中依然可用
+        el: '#app',
+        data() {
+            return {
+                name: 'Gene',
+                obj: {
+                    name: 'yjy',
+                    age: 18
+                },
+                arr: [] // vue 中数组中的对象, 如果变化了, 也需要更新视图
+            }
+        },
+    })
+
+    vm.arr.push({name: 1, age: 8})
+    // vm.$options
+</script>
+</body>
+</html>
