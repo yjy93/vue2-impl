@@ -3,7 +3,6 @@ import {initState} from "./state"
 import {compileToFunctions} from "./compiler/index"
 
 export function initMixin(Vue) {
-    console.log('initMixin');
     Vue.prototype._init = function (options) {
         const vm = this
         vm.$options = options // 实例上有个属性 $options, 表示的是用户传入的所有属性

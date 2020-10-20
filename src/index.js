@@ -3,7 +3,6 @@
 import {initMixin} from "./init"
 
 function Vue(options) {
-    console.log('new vue');
     this._init(options) // new Vue的时候调用 init方法进行初始化操作
 }
 

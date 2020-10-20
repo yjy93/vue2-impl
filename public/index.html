@@ -14,14 +14,14 @@
     4. 生成 真实的 dom 结构 扔到 页面中
 
 -->
-<div id="app">
+<div id="app" style="color:red;background-color: lightgray">
     <div style="color:red;">
-        <span>{{name}}</span>
+        <span>{{name}} <a>hello</a> </span>
     </div>
 </div>
 <script type="text/javascript" src="/dist/vue.js"></script>
 <script type="text/javascript">
-    // 响应式数据变化, 数据代理 Object.defineProperty
+    // 响应式数据变o化, 数据代理 Object.defineProperty
     const vm = new Vue({ // Vue2 是 基于 options API的, 这些 API在Vue3中依然可用
         el: '#app',
         data() {
