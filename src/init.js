@@ -1,6 +1,7 @@
 // 初始化 代码
 import {initState} from "./state"
 import {compileToFunctions} from "./compiler/index"
+import {mountComponent} from "./lifecycle"
 
 export function initMixin(Vue) {
     Vue.prototype._init = function (options) {
@@ -42,6 +43,8 @@ export function initMixin(Vue) {
             const render = compileToFunctions(template)
             options.render = render // 保证 render 方法一定存在
         }
+        // 组件挂载
+        mountComponent(vm, el);
     }
 }
 
