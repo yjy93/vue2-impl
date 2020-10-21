@@ -13,8 +13,8 @@ class Observer {
         })
         // value 可能是对象, 也可能是数组, 分类处理
         if (Array.isArray(value)) {
-            // 数组不用 defineProperty 来进行代理, 新能不好
-            // value.__proto__.arrayMethods; // 当时数组时, 改写方法为自己重写后的方法?
+            // 数组不用 defineProperty 来进行代理, 性能不好
+            // value.__proto__.arrayMethods; // 当是数组时, 改写方法为自己重写后的方法?
             Object.setPrototypeOf(value, arrayMethods)
             this.observeArray(value) // 观测数组中的数据
         } else {
@@ -56,9 +56,8 @@ export function defineReactive(data, key, value) {
     })
 }
 
-// 观测数据: vm 实例中配置项 options 的 data 执行后的 对象
+// 观测数据: vm 实例对象中的data
 export function observe(data) {
-    console.log('观测数据 --->>>', data);
     // 我们需要对这个 数据进行重新定义
     // 只对对象类型进行观测, 非对象类型无法观测
     if (typeof data !== 'object' || data == null) {

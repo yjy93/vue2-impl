@@ -1,6 +1,7 @@
 // vue 的数据有很多种 data computed watch ...
 import {observe} from "./observer/index.js"
 
+// 初始化状态数据
 export function initState(vm) {
     // 将所有数据都定义在 vm 属性上, 并且后续更改, 需要触发视图更新
     const opts = vm.$options; // 获取用户传入的属性
@@ -13,7 +14,7 @@ export function initState(vm) {
 
 // Vue 中数据代理方法
 function proxy(vm, source, key) {
-    // 通过Object.defineProperty() 方法给 vm 添加属性,并且给属性添加 getter 和 setter方法,完成数据响应式处理.
+    // 通过Object.defineProperty() 方法给 vm 添加属性,并且给属性添加 getter 和 setter方法,完成数据劫持
     Object.defineProperty(vm, key, {
         get() {
             return vm[source][key]
@@ -33,7 +34,7 @@ function initData(vm) {
 
     // 通过 vm._data获取劫持后的数据, 用户就可以拿到 _data 了
     for (let key in data) {
-        // 将 _data 中的数据, 全部放到 vm 上, 代理到 vm上, => 数据代理的实现
+        // 将 _data 中的数据, 全部代理到 vm上, => 添加 getter, setter方法, 实现数据的拦截
         proxy(vm, '_data', key)
     }
 
