@@ -3,7 +3,7 @@
 import {arrayMethods} from "../array"
 
 class Observer {
-    // 对这个 value 属性, 重新定义
+    // 对这个 value 属性(对这个 data 数据), 重新定义
     constructor(value) {
         // value.__ob__ = this
         Object.defineProperty(value, '__ob__', {
@@ -22,6 +22,7 @@ class Observer {
         }
     }
 
+    // 观测数组数据的变化
     observeArray(value) {
         for (let i = 0; i < value.length; i++) {
             observe(value[i]) // 处理的是 原有数组中的对象
@@ -38,8 +39,9 @@ class Observer {
     }
 }
 
+// 拦截 对象中属性,定义成响应式属性
 export function defineReactive(data, key, value) {
-    // value 可能也是一个对象
+    // value 可能也是一个对象, 重新观测,如果是对象, 则递归观察, 如果不是对象, 则跳出观察, 代码向下执行
     observe(value); // 对结果递归拦截
 
     Object.defineProperty(data, key, { // vue2 中数据不要嵌套过深, 过深会浪费性能
@@ -54,7 +56,7 @@ export function defineReactive(data, key, value) {
     })
 }
 
-// 观测数据
+// 观测数据: vm 实例中配置项 options 的 data 执行后的 对象
 export function observe(data) {
     console.log('观测数据 --->>>', data);
     // 我们需要对这个 数据进行重新定义
