@@ -16,7 +16,6 @@ export function renderMixIn(Vue) {
     let render = vm.$options.render // 获取编译后的render方法
     // 调用 render 方法, 产生虚拟节点
     let vnode = render.call(vm); // _c(xx,xx,xx) 等方法 返回的vnode
-    console.log('render 后的 vnode --->',vnode);
     return vnode; // 虚拟节点
   }
 }

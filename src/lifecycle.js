@@ -8,7 +8,6 @@ export function lifecycleMixIn(Vue) {
     const vm = this;
 
     // 首次渲染, 需要用虚拟节点, 来更新真实的 dom
-    console.log(99999,vnode);
     vm.$el = patch(vm.$options.el, vnode)
   }
 }
@@ -17,7 +16,6 @@ export function mountComponent(vm, el) {
   // 默认 vue 是通过watch 来进行渲染的 = 渲染 watcher (每一个组件都有一个渲染watcher)
   let updateComponent = () => {
     // 虚拟节点, 先调 render, 再调 update
-    console.log('vm._render -->',vm._render());
     vm._update(vm._render())
 
   }

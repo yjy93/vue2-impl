@@ -3,7 +3,8 @@
 import {arrayMethods} from "../array"
 
 class Observer {
-    constructor(value) { // 对这个 value 属性, 重新定义
+    // 对这个 value 属性, 重新定义
+    constructor(value) {
         // value.__ob__ = this
         Object.defineProperty(value, '__ob__', {
             value: this,
@@ -53,7 +54,9 @@ export function defineReactive(data, key, value) {
     })
 }
 
+// 观测数据
 export function observe(data) {
+    console.log('观测数据 --->>>', data);
     // 我们需要对这个 数据进行重新定义
     // 只对对象类型进行观测, 非对象类型无法观测
     if (typeof data !== 'object' || data == null) {

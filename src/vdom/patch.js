@@ -34,7 +34,6 @@ function createElm(vnode) {
 
 function updateProperties(vnode) { // 更新标签属性
   let newProps = vnode.data || {} // 属性
-  console.log('vnode -->',vnode);
   let el = vnode.el // dom 元素
   for (let key in newProps) {
     if (key == 'style') {
