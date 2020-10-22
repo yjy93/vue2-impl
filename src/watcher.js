@@ -1,5 +1,6 @@
 //
 import {popTarget, pushTarget} from "./observer/dep"
+import {queueWatcher} from "./observer/schedular"
 
 let id = 0;
 
@@ -25,7 +26,6 @@ class Watcher {
 
   // 让 watcher 记住dep
   addDep(dep) {
-    console.log('dep.id -->', dep.id);
     let id = dep.id
     // 如果没有这个 dep 才将其存入
     if (!this.depsId.has(id)) {
@@ -35,13 +35,19 @@ class Watcher {
     }
   }
 
-  // dep中调用 watcher 的update, update中,再调用 this.get(), 重新渲染
-  update() { //
-    this.get()
+  // 再次更新
+  run() {
+    this.get(); // 再次更新
   }
 
+  // dep中调用 watcher 的update, update中,再调用 this.get(), 重新渲染
+  update() { // 如果多次更改, 我希望合并成一次更改
+    // this.get();
+    queueWatcher(this)
+  }
   // 当属性取值时, 需要记住这个 watcher, 稍后数据变化了, 去执行自己记住的 watcher
-
 }
+
+
 
 export default Watcher

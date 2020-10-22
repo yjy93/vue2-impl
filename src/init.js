@@ -2,6 +2,7 @@
 import {initState} from "./state"
 import {compileToFunctions} from "./compiler/index"
 import {mountComponent} from "./lifecycle"
+import {nextTick} from "./util"
 
 export function initMixin(Vue) {
   // 初始化操作
@@ -19,6 +20,8 @@ export function initMixin(Vue) {
     }
   }
 
+  // 把 nextTick 的处理方法放到 Vue 原型上供 用户使用
+  Vue.prototype.$nextTick = nextTick
   // 组件挂载
   Vue.prototype.$mount = function (el) {
     el = document.querySelector(el)

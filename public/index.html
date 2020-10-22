@@ -42,9 +42,12 @@
   })
   // 依赖收集
   setTimeout(() => {
-    vm.name = '晴晴', // 我希望数据更新, 可以自动更新视图,而不是用户手动触发
-      vm.age = 100,
-      vm._update(vm._render()) // 强制更新方法
+    vm.name = '杨阳' // 我希望数据更新, 可以自动更新视图,而不是用户手动触发
+    // 异步更新问题, 导致更新数据后, 我无法立马拿到更新后的值
+    vm.$nextTick(() => {
+      console.log(vm.$options.el.innerHTML);
+    })
+    // vm.age = 100, vm._update(vm._render()) // 强制更新方法
   }, 1000)
 
 </script>

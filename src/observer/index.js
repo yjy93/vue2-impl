@@ -54,7 +54,6 @@ export function defineReactive(data, key, value) {
       return value
     },
     set(newValue) {
-      console.log(456, dep);
       if (newValue === value) return;
       observe(newValue) // 如果用户设置的是一个对象, 就继续将该用户设置的对象变成响应式的
       value = newValue
