@@ -4,7 +4,7 @@ function genProps(attrs) { // 生成标签的属性对象
     let str = ''
     for (let i = 0; i < attrs.length; i++) {
         let attr = attrs[i]; //
-        if (attrs.name === 'style') {
+        if (attr.name === 'style') {
             let obj = {}
             attr.value.split(';').forEach((item) => {
                 let [key, value] = item.split(':')
