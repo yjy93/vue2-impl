@@ -8,7 +8,9 @@ export function lifecycleMixIn(Vue) {
     const vm = this;
 
     // 首次渲染, 需要用虚拟节点, 来更新真实的 dom
-    vm.$el = patch(vm.$options.el, vnode)
+    // 初始化渲染的时候, 会创建一个新节点, 并且将老节点删掉
+    // 第一次渲染完毕后, 拿到新的节点, 再次渲染时,替换上次渲染的结果
+    vm.$options.el = patch(vm.$options.el, vnode)
   }
 }
 

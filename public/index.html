@@ -12,8 +12,13 @@
     2. 需要去当前的实例上取值 with
     3. 虚拟 dom =>  说白了就是一个对象 虚拟dom的好处就是 : 可以描述 dom 结构
     4. 生成 真实的 dom 结构 扔到 页面中
-
 -->
+<!--
+    1. 对数据进行了拦截  对象, 数组 依赖手机
+    2. template 模板 => ast语法树(描述语法的) => 生成 render函数 => 虚拟dom
+    3. new Vue时, 会产生一个 watcher(渲染watcher) vm._update(vm._render) 创建真实节点
+
+ -->
 <div id="app" style="color:red;background-color: lightgray">
     <div style="color:red;">
         <span>{{name}} <a>hello</a> </span>
@@ -21,7 +26,7 @@
 </div>
 <script type="text/javascript" src="/dist/vue.js"></script>
 <script type="text/javascript">
-    // 响应式数据变o化, 数据代理 Object.defineProperty
+    // 响应式数据变化, 数据代理 Object.defineProperty
     const vm = new Vue({ // Vue2 是 基于 options API的, 这些 API在Vue3中依然可用
         el: '#app',
         data() {
@@ -35,9 +40,12 @@
             }
         },
     })
+    // 依赖收集
+    setTimeout(() => {
+        vm.name = '晴晴' // 我希望数据更新, 可以自动更新视图,而不是用户手动触发
+        vm._update(vm._render()) // 强制更新方法
+    }, 1000)
 
-    vm.arr.push({name: 1, age: 8})
-    // vm.$options
 </script>
 </body>
 </html>

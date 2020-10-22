@@ -13,19 +13,21 @@ export function initMixin(Vue) {
     // 1. 初始化状态数据
     initState(vm)
 
+    // 如果有 el 选项, 挂载
     if (vm.$options.el) { // 数据可以挂载到页面上
       vm.$mount(vm.$options.el)
     }
   }
 
+  // 组件挂载
   Vue.prototype.$mount = function (el) {
     el = document.querySelector(el)
     const vm = this
     const options = vm.$options
     vm.$options.el = el
-    // 如果有 render 就直接使用 render方法
-    // 如果没有 render 看有没有 template 属性
-    // 没有 template 就接着找外部模板
+    //1. 如果有 render 就直接使用 render方法
+    //2. 如果没有 render 看有没有 template 属性
+    //3. 没有 template 就接着找外部模板
     if (!options.render) {
       let template = options.template
       if (!template && el) {

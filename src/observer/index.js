@@ -1,6 +1,7 @@
 // 观测数据
 
 import {arrayMethods} from "../array"
+import Dep from "./dep"
 
 class Observer {
     // 对这个 value 属性(对这个 data 数据), 重新定义
@@ -44,8 +45,13 @@ export function defineReactive(data, key, value) {
     // value 可能也是一个对象, 重新观测,如果是对象, 则递归观察, 如果不是对象, 则跳出观察, 代码向下执行
     observe(value); // 对结果递归拦截
 
+    let deb = new Dep()// 每次都会给属性创建一个 dep
     Object.defineProperty(data, key, { // vue2 中数据不要嵌套过深, 过深会浪费性能
-        get() {
+        get() { // 需要给每个属性都增加一个 dep
+            console.log(key, Dep.target);
+            if (Dep.target) {
+                dep.depend() // 让这个属性自己的 dep 记住这个watcher, 也要让 watcher 记住这个 dep
+            }
             return value
         },
         set(newValue) {
