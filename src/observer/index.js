@@ -7,6 +7,7 @@ class Observer {
   // 对这个 value 属性(对这个 data 数据), 重新定义
   constructor(value) {
     // value.__ob__ = this
+    this.dep = new Dep() // 给数组本身和对象本身增加一个 dep 属性
     Object.defineProperty(value, '__ob__', {
       value: this,
       enumerable: false, // 不能被枚举,表示不能被循环
@@ -43,13 +44,18 @@ class Observer {
 // 拦截 对象中属性,定义成响应式属性
 export function defineReactive(data, key, value) {
   // value 可能也是一个对象, 重新观测,如果是对象, 则递归观察, 如果不是对象, 则跳出观察, 代码向下执行
-  observe(value); // 对结果递归拦截
-
+  let childOb = observe(value); // 对结果递归拦截
+  console.log(childOb.dep);
   let dep = new Dep()// 每次都会给属性创建一个 dep
   Object.defineProperty(data, key, { // vue2 中数据不要嵌套过深, 过深会浪费性能
     get() { // 需要给每个属性都增加一个 dep
       if (Dep.target) {
         dep.depend() // 让这个属性自己的 dep 记住这个watcher, 也要让 watcher 记住这个 dep
+
+        // childOb 可能是对象, 也可能是数组
+        if (childOb) { // 如果对数组取值, 会将当前的 watcher 和数组进行关联
+          childOb.dep.depend()
+        }
       }
       return value
     },

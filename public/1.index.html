@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<!--
+    模板编译原理: AST语法树  先表示出 html 来, 再把 html -> js 语法
+
+    1. 需要将 模板变成一个 render 方法
+    2. 需要去当前的实例上取值 with
+    3. 虚拟 dom =>  说白了就是一个对象 虚拟dom的好处就是 : 可以描述 dom 结构
+    4. 生成 真实的 dom 结构 扔到 页面中
+-->
+<!--
+    1. 对数据进行了拦截  对象, 数组 依赖手机
+    2. template 模板 => ast语法树(描述语法的) => 生成 render函数 => 虚拟dom
+    3. new Vue时, 会产生一个 watcher(渲染watcher) vm._update(vm._render) 创建真实节点
+
+ -->
+<div id="app" style="color:red;background-color: lightgray">
+    <div style="color:red;">
+        <ul>
+            <li>{{name}}</li>
+            <li>{{age}}</li>
+        </ul>
+    </div>
+</div>
+<script type="text/javascript" src="/dist/vue.js"></script>
+<script type="text/javascript">
+  // 响应式数据变化, 数据代理 Object.defineProperty
+  const vm = new Vue({ // Vue2 是 基于 options API的, 这些 API在Vue3中依然可用
+    el: '#app',
+    data() {
+      return {
+        name: 'Gene',
+        age: 18,
+        arr: [] // vue 中数组中的对象, 如果变化了, 也需要更新视图
+      }
+    },
+  })
+  // 依赖收集
+  setTimeout(() => {
+    vm.name = '杨阳' // 我希望数据更新, 可以自动更新视图,而不是用户手动触发
+    vm.age = 18 // Vue 的更新原理, 就是通过 nextTick 异步执行更新视图逻辑
+    // 异步更新问题, 导致更新数据后, 我无法立马拿到更新后的值
+    vm.$nextTick(() => {
+      console.log(vm.$options.el.innerHTML);
+    })
+    // vm.age = 100, vm._update(vm._render()) // 强制更新方法
+  }, 1000)
+
+</script>
+</body>
+</html>
