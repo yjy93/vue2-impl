@@ -41,6 +41,17 @@ class Observer {
   }
 }
 
+// 如果数组内部中元素还是数组, 再次进行依赖收集
+function dependArray(value) { // 就是让里层数组收集外层数组的依赖, 这样修改里层数组,也可以更新数组
+  for (let i = 0; i < value.length; i++) {
+    let current = value[i];
+    current.__ob__ && current.__ob__.dep.depend()
+    if (Array.isArray(current)) {
+      dependArray(current) // 递归
+    }
+  }
+}
+
 // 拦截 对象中属性,定义成响应式属性
 export function defineReactive(data, key, value) {
   // value 可能也是一个对象, 重新观测,如果是对象, 则递归观察, 如果不是对象, 则跳出观察, 代码向下执行
@@ -55,6 +66,9 @@ export function defineReactive(data, key, value) {
         // childOb 可能是对象, 也可能是数组
         if (childOb) { // 如果对数组取值, 会将当前的 watcher 和数组进行关联
           childOb.dep.depend()
+          if (Array.isArray(value)) {
+            dependArray(value)
+          }
         }
       }
       return value
