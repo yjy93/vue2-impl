@@ -21,30 +21,31 @@
  -->
 <div id="app" style="color:red;background-color: lightgray">
     <div style="color:red;">
-        <span>{{name}} <a>hello</a> </span>
+        <ul>
+            <li>{{name}}</li>
+            <li>{{age}}</li>
+        </ul>
     </div>
 </div>
 <script type="text/javascript" src="/dist/vue.js"></script>
 <script type="text/javascript">
-    // 响应式数据变化, 数据代理 Object.defineProperty
-    const vm = new Vue({ // Vue2 是 基于 options API的, 这些 API在Vue3中依然可用
-        el: '#app',
-        data() {
-            return {
-                name: 'Gene',
-                obj: {
-                    name: 'yjy',
-                    age: 18
-                },
-                arr: [] // vue 中数组中的对象, 如果变化了, 也需要更新视图
-            }
-        },
-    })
-    // 依赖收集
-    setTimeout(() => {
-        vm.name = '晴晴' // 我希望数据更新, 可以自动更新视图,而不是用户手动触发
-        vm._update(vm._render()) // 强制更新方法
-    }, 1000)
+  // 响应式数据变化, 数据代理 Object.defineProperty
+  const vm = new Vue({ // Vue2 是 基于 options API的, 这些 API在Vue3中依然可用
+    el: '#app',
+    data() {
+      return {
+        name: 'Gene',
+        age: 18,
+        arr: [] // vue 中数组中的对象, 如果变化了, 也需要更新视图
+      }
+    },
+  })
+  // 依赖收集
+  setTimeout(() => {
+    vm.name = '晴晴', // 我希望数据更新, 可以自动更新视图,而不是用户手动触发
+      vm.age = 100,
+      vm._update(vm._render()) // 强制更新方法
+  }, 1000)
 
 </script>
 </body>
