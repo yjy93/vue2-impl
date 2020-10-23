@@ -3,7 +3,7 @@ import serve from 'rollup-plugin-serve';
 export default { // 用于打包的配置
     input: './src/index.js',
     output: {
-        format: 'umd', // 模块化类型
+        format: 'umd', // 模块化类型  统一模块规范
         file: 'dist/vue.js',
         name: 'Vue', // 打包后的全局变量的名字  window.Vue
         sourcemap: true
