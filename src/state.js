@@ -12,7 +12,7 @@ export function initState(vm) {
     }
 }
 
-// Vue 中数据代理方法
+// Vue 中数据代理方法, 把数据 代理到 vm 实例上.
 function proxy(vm, source, key) {
     // 通过Object.defineProperty() 方法给 vm 添加属性,并且给属性添加 getter 和 setter方法,完成数据劫持
     Object.defineProperty(vm, key, {
@@ -27,7 +27,7 @@ function proxy(vm, source, key) {
 
 // 初始化状态数据...
 function initData(vm) {
-    // 数据劫持 Object.defineproperty()
+    // 数据劫持 Object.defineProperty()
     let data = vm.$options.data
     // 对 data 类型进行判断, 如果是函数, 获取函数返回值作为对象
     data = vm._data = typeof data === 'function' ? data.call(vm) : data
@@ -38,7 +38,7 @@ function initData(vm) {
         proxy(vm, '_data', key)
     }
 
-    // 观测这个数据
+    // 观测这个数据 如何响应式处理数据, 这里用到了 observe
     observe(data)
 }
 

@@ -20,6 +20,7 @@ class Observer {
       Object.setPrototypeOf(value, arrayMethods)
       this.observeArray(value) // 观测数组中的数据
     } else {
+      // 如果是 对象, 走 walk 这个方法
       this.walk(value)
     }
   }
@@ -30,7 +31,6 @@ class Observer {
       observe(value[i]) // 处理的是 原有数组中的对象
     }
   }
-
 
   walk(data) {
     // 将对象中的所有 key, 重新用 defineProperty 定义成响应式的
@@ -56,7 +56,6 @@ function dependArray(value) { // 就是让里层数组收集外层数组的依�
 export function defineReactive(data, key, value) {
   // value 可能也是一个对象, 重新观测,如果是对象, 则递归观察, 如果不是对象, 则跳出观察, 代码向下执行
   let childOb = observe(value); // 对结果递归拦截
-  console.log(childOb.dep);
   let dep = new Dep()// 每次都会给属性创建一个 dep
   Object.defineProperty(data, key, { // vue2 中数据不要嵌套过深, 过深会浪费性能
     get() { // 需要给每个属性都增加一个 dep
@@ -87,7 +86,7 @@ export function defineReactive(data, key, value) {
 // 观测数据: vm 实例对象中的data
 export function observe(data) {
   // 我们需要对这个 数据进行重新定义
-  // 只对对象类型进行观测, 非对象类型无法观测
+  // 只对 对象类型进行观测, 非对象类型无法观测
   if (typeof data !== 'object' || data == null) {
     return;
   }
@@ -96,6 +95,6 @@ export function observe(data) {
     return
   }
 
-  // 通过类来实现对数据的观测 类可以方便扩展
+  // 通过类来 实现对数据的观测 类可以方便扩展
   return new Observer(data)
 }
