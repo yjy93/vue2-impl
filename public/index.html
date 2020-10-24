@@ -5,39 +5,27 @@
     <title>Title</title>
 </head>
 <body>
-<div id="app"></div>
+<div id="app">
+    <my-button></my-button>
+    <my-button></my-button>
+    <my-button></my-button>
+</div>
+
 <script type="text/javascript" src="/dist/vue.js"></script>
 <script type="text/javascript">
-  // mergeOptions 的实现原理
-  Vue.mixin({
-
-    beforeCreate() {// 组件创建之前
-      console.log(' before-create 组件创建之前 111');
-    },
-    created() { // 数据已经被劫持了
-      console.log('created 组件创建完成111');
-    },
+  // Vue.component => 内部用的 Vue.extend API
+  // => 通过对象创建一个类, 通过这个类去创建一个组件
+  Vue.component('my-button', {
+    template: '<button>按钮</button>'
   })
-
-  Vue.mixin({
-
-    beforeCreate() {// 组件创建之前
-      console.log(' before-create 组件创建之前 222');
-    },
-    created() { // 数据已经被劫持了
-      console.log('created 组件创建完成222');
-    },
-  })
-
-
+  // 先查找自己身上是否存在, 没有查找父亲的 __proto__  Object.create
   const vm = new Vue({
     el: '#app',
-    beforeCreate() {// 组件创建之前
-      console.log(' before-create 组件创建之前333');
-    },
-    created() { // 数据已经被劫持了
-      console.log('created 组件创建完成333');
-    },
+    components: {
+      'my-button': {
+        template: '<button>内部按钮</button>'
+      }
+    }
   })
 </script>
 </body>

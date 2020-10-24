@@ -40,8 +40,10 @@ const LIFECYCLE_HOOKS = [
   'beforeMount',
   'mounted',
 ]
+
 const strategies = {}// 策略
 
+// 合并声明周期勾子
 function mergeHook(parentVal, childVal) {
   if (childVal) {
     if (parentVal) {
@@ -58,6 +60,17 @@ function mergeHook(parentVal, childVal) {
 LIFECYCLE_HOOKS.forEach((hook) => {
   strategies[hook] = mergeHook
 })
+
+// 策略模式 合并 组件
+strategies.components = function (parentVal, childVal) {
+  const res = Object.create(parentVal)
+  if (childVal) {
+    for (let key in childVal) {
+      res[key] = childVal[key];
+    }
+  }
+  return res
+}
 
 // 合并选项
 export function mergeOptions(parent, child) {
