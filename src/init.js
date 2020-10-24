@@ -1,18 +1,24 @@
 // 初始化 代码
 import {initState} from "./state"
 import {compileToFunctions} from "./compiler/index"
-import {mountComponent} from "./lifecycle"
-import {nextTick} from "./util"
+import {callHook, mountComponent} from "./lifecycle"
+import {mergeOptions, nextTick} from "./util"
 
 export function initMixin(Vue) {
   // 初始化操作
-  Vue.prototype._init = function (options) {
+  Vue.prototype._init = function (options) { // options 是用户传入的对象
     const vm = this
     // 实例上有个属性 $options, 表示的是用户传入的所有属性
-    vm.$options = options
+    // vm.constructor.options === Vue.options
+    vm.$options = mergeOptions(vm.constructor.options, options)
+    console.log(vm.$options);
 
+    // vm.$options = options
+
+    callHook(vm, 'beforeCreate')
     // 1. 初始化状态数据
     initState(vm)
+    callHook(vm, 'created')
 
     // 如果有 el 选项, 挂载
     if (vm.$options.el) { // 数据可以挂载到页面上

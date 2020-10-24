@@ -14,6 +14,14 @@ export function lifecycleMixIn(Vue) {
   }
 }
 
+// 调用声明周期勾子函数的方法
+export function callHook(vm, hook) { // 发布模式
+  const handlers = vm.$options[hook]
+  if (handlers) {
+    handlers.forEach((hander) => hander.call(vm))
+  }
+}
+
 export function mountComponent(vm, el) {
   // 默认 vue 是通过watch 来进行渲染的 = 渲染 watcher (每一个组件都有一个渲染watcher)
   let updateComponent = () => {
@@ -21,6 +29,8 @@ export function mountComponent(vm, el) {
     vm._update(vm._render())
 
   }
+
+
   new Watcher(vm, updateComponent, () => {
     //
   }, true) // true 表示它是一个渲染 watcher, 执行 updateComponent()

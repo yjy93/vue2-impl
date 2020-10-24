@@ -34,6 +34,31 @@ export function nextTick(cb) {
 // 判断是否为对象的方法
 export const isObject = (val) => typeof val == 'object' && val !== null
 
+const LIFECYCLE_HOOKS = [
+  'beforeCreate',
+  'created',
+  'beforeMount',
+  'mounted',
+]
+const strategies = {}// 策略
+
+function mergeHook(parentVal, childVal) {
+  if (childVal) {
+    if (parentVal) {
+      return parentVal.concat(childVal)
+    } else { // 如果儿子有, 父亲没有
+      return [childVal]
+    }
+  } else {
+    return parentVal // 如果儿子没有, 直接采用父亲的
+  }
+
+}
+
+LIFECYCLE_HOOKS.forEach((hook) => {
+  strategies[hook] = mergeHook
+})
+
 // 合并选项
 export function mergeOptions(parent, child) {
   const options = {}
@@ -52,6 +77,10 @@ export function mergeOptions(parent, child) {
 
   // 合并字段
   function mergeField(key) {
+    // 策略模式
+    if (strategies[key]) {
+      return options[key] = strategies[key](parent[key], child[key])
+    }
     if (isObject(parent[key] && isObject(child[key]))) {
       options[key] = {...parent[key], ...child[key]}
     } else {
