@@ -30,3 +30,38 @@ export function nextTick(cb) {
 }
 
 // nextTick 肯定有 异步功能
+
+// 判断是否为对象的方法
+export const isObject = (val) => typeof val == 'object' && val !== null
+
+// 合并选项
+export function mergeOptions(parent, child) {
+  const options = {}
+  // 自定义的策略
+  // 1. 如果父亲有的 儿子也有, 应该用 儿子替换父亲
+  // 2. 如果父亲有值, 儿子没有, 应该用父亲的
+  for (let key in parent) { // 以 父亲为准, 把 儿子的字段合并
+    mergeField(key)
+  }
+
+  for (let key in child) {
+    if (!parent.hasOwnProperty(key)) {
+      mergeField(key)
+    }
+  }
+
+  // 合并字段
+  function mergeField(key) {
+    if (isObject(parent[key] && isObject(child[key]))) {
+      options[key] = {...parent[key], ...child[key]}
+    } else {
+      if (child[key]) { // 如果儿子有值, 就以儿子的值为主
+        options[key] = child[key]
+      } else {
+        options[key] = parent[key] // 否则就以 父亲的为主
+      }
+    }
+  }
+
+  return options;
+}

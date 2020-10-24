@@ -5,30 +5,40 @@
     <title>Title</title>
 </head>
 <body>
-<div id="app" style="color:red;background-color: lightgray">
-    <div style="color:red;">
-        <ul>
-            {{arr}}}
-        </ul>
-    </div>
-</div>
+<div id="app"></div>
 <script type="text/javascript" src="/dist/vue.js"></script>
 <script type="text/javascript">
-  // 数组的依赖收集
-  const vm = new Vue({ // Vue2 是 基于 options API的, 这些 API在Vue3中依然可用
-    el: '#app',
-    data() {
-      // 内部会给 arr 这个属性增加依赖, 但是我们更改数组时, 不会去通知更新
-      // 外层数组进行了依赖收集, 但是里层数组没有进行依赖收集
-      return {
-        arr: [[1, 2, 3]]
-      }
+  // mergeOptions 的实现原理
+  Vue.mixin({
+
+    beforeCreate() {// 组件创建之前
+      console.log(' before-create 组件创建之前 111');
+    },
+    created() { // 数据已经被劫持了
+      console.log('created 组件创建完成111');
     },
   })
 
-  setTimeout(() => {
-    vm.arr[0].push(56)
-  }, 1000)
+  Vue.mixin({
+
+    beforeCreate() {// 组件创建之前
+      console.log(' before-create 组件创建之前 111');
+    },
+    created() { // 数据已经被劫持了
+      console.log('created 组件创建完成111');
+    },
+  })
+
+
+  const vm = new Vue({
+    el: '#app',
+    beforeCreate() {// 组件创建之前
+      console.log(' before-create 组件创建之前222');
+    },
+    created() { // 数据已经被劫持了
+      console.log('created 组件创建完成222');
+    },
+  })
 </script>
 </body>
 </html>
