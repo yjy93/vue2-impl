@@ -22,6 +22,7 @@ export function initGlobalAPI(Vue) {
     console.log(this.options);
   }
 
+  let cid = 0;
   Vue.extend = function (options) { // 子组件初始化时会 new VueComponent(options)
     // new VueComponent(options)
     const Super = this;
@@ -29,6 +30,7 @@ export function initGlobalAPI(Vue) {
       this._init(options)
     }
     // 原型继承
+    Sub.cid = cid++;
     Sub.prototype = Object.create(Super.prototype)
     Super.prototype.constructor = Sub;
     Sub.component = Super.component

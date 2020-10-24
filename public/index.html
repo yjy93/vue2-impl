@@ -27,6 +27,10 @@
       }
     }
   })
+  // 1. Vue.component => 调用 Vue.extend() 方法 => 生成子类的构造函数
+  // 2. 如果组件添加了 init hook() componentOptions => Ctor
+  // 3. 创建真实节点时, 会调用 init 狗子 new Ctor().$mount()
+  // 内部会在给组件添加一个 watcher, 会将渲染的节点放在当前实例上, 并且返回.
 </script>
 </body>
 </html>

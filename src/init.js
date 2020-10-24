@@ -5,13 +5,14 @@ import {callHook, mountComponent} from "./lifecycle"
 import {mergeOptions, nextTick} from "./util"
 
 export function initMixin(Vue) {
+  // Vue 是如何渲染的? 1. ast 2. render函数 3. 虚拟节点vnode()
+
   // 初始化操作
   Vue.prototype._init = function (options) { // options 是用户传入的对象
     const vm = this
     // 实例上有个属性 $options, 表示的是用户传入的所有属性
     // vm.constructor.options === Vue.options
     vm.$options = mergeOptions(vm.constructor.options, options)
-    console.log(vm.$options);
 
     // vm.$options = options
 
@@ -30,7 +31,7 @@ export function initMixin(Vue) {
   Vue.prototype.$nextTick = nextTick
   // 组件挂载
   Vue.prototype.$mount = function (el) {
-    el = document.querySelector(el)
+    el = el && document.querySelector(el)
     const vm = this
     const options = vm.$options
     vm.$el = el
@@ -57,7 +58,7 @@ export function initMixin(Vue) {
       options.render = render // 保证 render 方法一定存在
     }
     // 组件挂载
-    mountComponent(vm, el);
+    mountComponent(vm);
   }
 }
 
