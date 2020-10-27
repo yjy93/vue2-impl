@@ -1,3 +1,5 @@
+import {isSameVnode} from "./index"
+
 export function patch(oldVnode, vnode) {
   // oldVnode 是一个真实的元素
 
@@ -8,11 +10,13 @@ export function patch(oldVnode, vnode) {
 
   const isRealElement = oldVnode.nodeType
   // 2. 初次渲染 oldVnode 是一个真实的 dom
+  debugger
   if (isRealElement) {
     // 初次渲染
     const oldElm = oldVnode; //id="app"
     const parentElm = oldElm.parentNode
 
+    debugger
     let el = createElm(vnode) // 根据虚拟节点创建真实节点
     parentElm.insertBefore(el, oldElm.nextSibling); // 将创建的节点, 插到原有的节点的下一个
     parentElm.removeChild(oldElm)
@@ -41,6 +45,7 @@ export function patch(oldVnode, vnode) {
     let oldChildren = oldVnode.children || []
     let newChildren = vnode.children || []
     if (oldChildren.length > 0 && newChildren.length > 0) { //1. 新节点和老节点都有儿子
+
       /** -------- vue dom-diff 算法核心部分 -------*/
       updateChildren(el, oldChildren, newChildren)
     } else if (oldChildren.length > 0) { //2. 老的有儿子,新的没儿子
@@ -51,6 +56,7 @@ export function patch(oldVnode, vnode) {
     }
   }
 }
+
 
 // 更新 子节点方法 === => Vue 中采用双指针的方式比较 新老节点
 function updateChildren(parent, oldChildren, newChildren) {
@@ -65,6 +71,27 @@ function updateChildren(parent, oldChildren, newChildren) {
   let newStartVnode = newChildren[0] // 老的开始节点
   let newEndVnode = newChildren[newEndIndex] // 老的結束节点
 
+  // 双指针移动, 开始索引小于结尾索引
+  while (oldStartIndex <= oldEndIndex && newStartIndex < newEndIndex) {
+    // 1. 前端中比较常见的操作有 向头部插入, 向尾部插入, 头部移动到尾部,  尾部移动到头部, 正序和反序
+    // 1) 向后插入的操作
+    if (isSameVnode(oldStartVnode, newStartVnode)) { // 比较两个 开始节点
+      patch(oldStartVnode, newStartVnode); // 如果是相同节点, patch 递归比较属性或子元素
+      oldStartVnode = oldChildren[++oldStartIndex]; // 向后移动一次节点指针
+      newStartVnode = newChildren[++newStartIndex]; // 向后移动一次节点指针
+    } else if (isSameVnode(oldEndVnode, newEndVnode)) { // 2). 向前插入
+      patch(oldEndVnode, newEndVnode)
+      oldEndVnode = oldChildren[--oldEndIndex]
+      newEndVnode = newChildren[--newEndIndex]
+
+    }
+  }
+
+  if (newStartIndex <= newEndIndex) {
+    for (let i = newStartIndex; i <= newEndIndex; i++) { // 新的节点比老的节点多, 插入新节点
+      parent.appendChild(createElm(newChildren[i]))
+    }
+  }
 
 }
 
