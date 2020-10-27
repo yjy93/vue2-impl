@@ -1,11 +1,13 @@
 export function patch(oldVnode, vnode) {
   // oldVnode 是一个真实的元素
 
+  // 1. 组件 oldVnode 是null
   if (!oldVnode) {
     return createElm(vnode) // 根据虚拟节点创建元素
   }
 
   const isRealElement = oldVnode.nodeType
+  // 2. 初次渲染 oldVnode 是一个真实的 dom
   if (isRealElement) {
     // 初次渲染
     const oldElm = oldVnode; //id="app"
@@ -16,10 +18,66 @@ export function patch(oldVnode, vnode) {
     parentElm.removeChild(oldElm)
     return el; // vm.$el
   } else {
-    // diff 算法
+    // 3. diff 算法, 两个虚拟节点的比对
+
+    // 1. 如果两个虚拟节点的标签不一致, 那就直接替换掉老节点
+    if (oldVnode.tag !== vnode.tag) {
+      return oldVnode.el.parentNode.replaceChild(createElm(vnode), oldVnode.el)
+    }
+    // 2. 标签一样, 但是是两个文本元素 {tag:undefined,text:'Gene'} text为文本内容
+    if (!oldVnode.tag) { // 标签相同,而且是文本的时候
+      if (oldVnode.text !== vnode.text) {
+        return oldVnode.el.textContent = vnode.text
+      }
+    }
+
+    // 3. 元素相同, 复用老节点,并且更新属性
+    let el = vnode.el = oldVnode.el // 复用真实老节点
+    // 用老的 属性, 和新的虚拟节点进行比对
+    updateProperties(vnode, oldVnode.data)
+
   }
 }
 
+// 更新节点属性
+function updateProperties(vnode, oldProps = {}) { // 更新标签属性
+  let newProps = vnode.data || {} // 属性
+  let el = vnode.el // dom 元素
+
+
+  // 1. 老的属性,新的没有 删除属性
+  for (let key in oldProps) {
+    if (!newProps[key]) { // 如果老的属性, 新的没有, 则删除老的属性
+      el.removeAttribute(key)
+    }
+  }
+
+  // 标签中的样式
+  let newStyle = newProps.style || {}
+  let oldStyle = oldProps.style || {}
+  // 判断样式时 如果老的标签有样式, 新的没有,则移除老的样式
+  for (let key in oldStyle) {
+    if (!newStyle[key]) {
+      el.style[key] = ''
+    }
+
+  }
+  // 2. 新的属性, 老的没有. 直接用新的属性覆盖老的属性,不考虑有没有
+  for (let key in newProps) {
+    if (key == 'style') {
+      for (let styleName in newProps.style) {
+        el.style[styleName] = newProps.style[styleName]
+      }
+    } else if (key === 'class') {
+      el.className = newProps.class
+    } else {
+      el.setAttribute(key, newProps[key])
+    }
+  }
+
+}
+
+// 创建组件
 function createComponent(vnode) {
   let i = vnode.data
   if ((i = i.hook) && (i = i.init)) {
@@ -32,7 +90,7 @@ function createComponent(vnode) {
 }
 
 // 根据虚拟节点创建真实节点
-function createElm(vnode) {
+export function createElm(vnode) {
   let {tag, children, key, data, text, vm} = vnode
   if (typeof tag === 'string') { // 两种可能,  可能是一个组件, 可能是一个标签
     // 可能是组件, 如果是组件就直接 根据组件创建出组件对应的真实节点
@@ -53,19 +111,4 @@ function createElm(vnode) {
   return vnode.el;
 }
 
-function updateProperties(vnode) { // 更新标签属性
-  let newProps = vnode.data || {} // 属性
-  let el = vnode.el // dom 元素
-  for (let key in newProps) {
-    if (key == 'style') {
-      for (let styleName in newProps.style) {
-        el.style[styleName] = newProps.style[styleName]
-      }
-    } else if (key === 'class') {
-      el.className = newProps.class
-    } else {
-      el.setAttribute(key, newProps[key])
-    }
-  }
 
-}
