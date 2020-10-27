@@ -35,7 +35,7 @@ class Observer {
   walk(data) {
     // 将对象中的所有 key, 重新用 defineProperty 定义成响应式的
     Object.keys(data).forEach((key) => {
-      //
+      // 数据响应式处理
       defineReactive(data, key, data[key])
     })
   }
@@ -55,7 +55,8 @@ function dependArray(value) { // 就是让里层数组收集外层数组的依�
 // 拦截 对象中属性,定义成响应式属性
 export function defineReactive(data, key, value) {
   // value 可能也是一个对象, 重新观测,如果是对象, 则递归观察, 如果不是对象, 则跳出观察, 代码向下执行
-  let childOb = observe(value); // 对结果递归拦截
+  // 对结果递归拦截
+  let childOb = observe(value);
   let dep = new Dep()// 每次都会给属性创建一个 dep
   Object.defineProperty(data, key, { // vue2 中数据不要嵌套过深, 过深会浪费性能
     get() { // 需要给每个属性都增加一个 dep
