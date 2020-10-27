@@ -27,7 +27,12 @@ let vm1 = new Vue({
   }
 })
 // 将模板编译成 render 函数
-let render1 = compileToFunctions(`<div id="a" a="1" style="color:blue">{{name}}</div>`)
+let render1 = compileToFunctions(`<div id="a" a="1" style="color:blue">
+    <li key="A">A</li>
+    <li key="B">B</li>
+    <li key="C">C</li>
+    <li key="D">D</li>
+</div>`)
 let oldVnode = render1.call(vm1); // 老的虚拟节点
 let el = createElm(oldVnode)
 document.body.appendChild(el)
@@ -37,7 +42,12 @@ let vm2 = new Vue({
     return {name: '杨阳'}
   }
 })
-let render2 = compileToFunctions(`<div id="b" b="1" style="background: red">{{name}}</div>`)
+let render2 = compileToFunctions(`<div id="b" b="1" style="background: red">
+    <li key="A">A</li>
+    <li key="B">B</li>
+    <li key="C">C</li>
+    <li key="D">D</li>
+</div>`)
 let newVnode = render2.call(vm2)
 
 setTimeout(() => {

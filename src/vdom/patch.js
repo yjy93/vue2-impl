@@ -36,7 +36,36 @@ export function patch(oldVnode, vnode) {
     // 用老的 属性, 和新的虚拟节点进行比对
     updateProperties(vnode, oldVnode.data)
 
+    // 4. 更新儿子
+    // 1. 老的有儿子, 新的也有儿子  dom-diff 算法比较
+    let oldChildren = oldVnode.children || []
+    let newChildren = vnode.children || []
+    if (oldChildren.length > 0 && newChildren.length > 0) { //1. 新节点和老节点都有儿子
+      /** -------- vue dom-diff 算法核心部分 -------*/
+      updateChildren(el, oldChildren, newChildren)
+    } else if (oldChildren.length > 0) { //2. 老的有儿子,新的没儿子
+      el.innerHTML = '' // 清空 删除所有节点
+    } else if (newChildren.length > 0) { // 3. 新的有儿子, 老的没儿子 => 在老节点上面增加儿子即可
+      // 把新儿子 的虚拟节点循环创建 一遍真实元素,插到页面中
+      newChildren.forEach(child => el.appendChild(createElm(child)));
+    }
   }
+}
+
+// 更新 子节点方法 === => Vue 中采用双指针的方式比较 新老节点
+function updateChildren(parent, oldChildren, newChildren) {
+
+  let oldStartIndex = 0; // 老的头索引
+  let oldEndIndex = oldChildren.length - 1; // 老的尾索引
+  let oldStartVnode = oldChildren[0] // 老的开始节点
+  let oldEndVnode = oldChildren[oldEndIndex] // 老的結束节点
+
+  let newStartIndex = 0; // 新的头索引
+  let newEndIndex = newChildren.length - 1; // 新的尾索引
+  let newStartVnode = newChildren[0] // 老的开始节点
+  let newEndVnode = newChildren[newEndIndex] // 老的結束节点
+
+
 }
 
 // 更新节点属性
