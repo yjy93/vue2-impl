@@ -16,7 +16,6 @@ export function patch(oldVnode, vnode) {
     const oldElm = oldVnode; //id="app"
     const parentElm = oldElm.parentNode
 
-    debugger
     let el = createElm(vnode) // 根据虚拟节点创建真实节点
     parentElm.insertBefore(el, oldElm.nextSibling); // 将创建的节点, 插到原有的节点的下一个
     parentElm.removeChild(oldElm)
@@ -83,13 +82,24 @@ function updateChildren(parent, oldChildren, newChildren) {
       patch(oldEndVnode, newEndVnode)
       oldEndVnode = oldChildren[--oldEndIndex]
       newEndVnode = newChildren[--newEndIndex]
-
+    } else if (isSameVnode(oldStartVnode, newEndVnode)) {// 老的头和新的尾比较
+      patch(oldStartVnode, newEndVnode)
+      parent.insertBefore(oldStartVnode.el, oldEndVnode.el.nextSibling)// 插入到老的最后一个元素前面
+      oldStartVnode = oldChildren[++oldStartIndex]
+      newEndVnode = newChildren[--newEndIndex]
     }
   }
 
   if (newStartIndex <= newEndIndex) {
     for (let i = newStartIndex; i <= newEndIndex; i++) { // 新的节点比老的节点多, 插入新节点
-      parent.appendChild(createElm(newChildren[i]))
+      // 向前 插入 向后插入
+      // 看 newEndIndex 下一个节点是否有值, 确定是向前插入还是向后插入
+      let nextEle = newChildren[newEndIndex + 1] == null ? null : newChildren[newEndIndex + 1].el
+      // appendChild he insertBefore 也可以进行合并
+
+      // 如果 insertBefore 的第二个参数等于null, 相当于 appendChild
+      parent.insertBefore(createElm(newChildren[i], nextEle))
+      // parent.appendChild(createElm(newChildren[i]))
     }
   }
 
