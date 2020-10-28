@@ -10,7 +10,6 @@ export function patch(oldVnode, vnode) {
 
   const isRealElement = oldVnode.nodeType
   // 2. 初次渲染 oldVnode 是一个真实的 dom
-  debugger
   if (isRealElement) {
     // 初次渲染
     const oldElm = oldVnode; //id="app"
@@ -71,7 +70,7 @@ function updateChildren(parent, oldChildren, newChildren) {
   let newEndVnode = newChildren[newEndIndex] // 老的結束节点
 
   // 双指针移动, 开始索引小于结尾索引
-  while (oldStartIndex <= oldEndIndex && newStartIndex < newEndIndex) {
+  while (oldStartIndex <= oldEndIndex && newStartIndex <= newEndIndex) {
     // 1. 前端中比较常见的操作有 向头部插入, 向尾部插入, 头部移动到尾部,  尾部移动到头部, 正序和反序
     // 1) 向后插入的操作
     if (isSameVnode(oldStartVnode, newStartVnode)) { // 比较两个 开始节点
@@ -98,8 +97,8 @@ function updateChildren(parent, oldChildren, newChildren) {
       // appendChild he insertBefore 也可以进行合并
 
       // 如果 insertBefore 的第二个参数等于null, 相当于 appendChild
-      parent.insertBefore(createElm(newChildren[i], nextEle))
-      // parent.appendChild(createElm(newChildren[i]))
+      // parent.insertBefore(createElm(newChildren[i], nextEle))
+      parent.appendChild(createElm(newChildren[i]))
     }
   }
 
