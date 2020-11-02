@@ -10,7 +10,14 @@ export function lifecycleMixIn(Vue) {
     // 首次渲染, 需要用虚拟节点, 来更新真实的 dom
     // 初始化渲染的时候, 会创建一个新节点, 并且将老节点删掉
     // 第一次渲染完毕后, 拿到新的节点, 再次渲染时,替换上次渲染的结果
-    vm.$el = patch(vm.$el, vnode) // 组件调用 patch 方法会产生 $el 属性
+    // 第一次初始化, 第二次走 diff 算法
+    const prevVnode = vm > _vnode // 先取上一次的 vnode,看一下是否有
+    vm._vnode = vnode // 保存上一次的虚拟节点
+    if (!prevVnode) { // 第一次 prevVnode 没有, 则是初渲染
+      vm.$el = patch(vm.$el, vnode) // 组件调用 patch 方法会产生 $el 属性
+    } else {
+      vm.$el = patch(prevVnode, vnode)// 第二次渲染, 开始 diff 比较
+    }
   }
 }
 
