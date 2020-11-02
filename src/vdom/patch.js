@@ -10,7 +10,6 @@ export function patch(oldVnode, vnode) {
 
   const isRealElement = oldVnode.nodeType
   // 2. 初次渲染 oldVnode 是一个真实的 dom
-  debugger
   if (isRealElement) {
     // 初次渲染
     const oldElm = oldVnode; //id="app"
@@ -70,11 +69,27 @@ function updateChildren(parent, oldChildren, newChildren) {
   let newStartVnode = newChildren[0] // 老的开始节点
   let newEndVnode = newChildren[newEndIndex] // 老的結束节点
 
+  // 通过key把索引关联起来
+  function makeIndexByKey(oldChildren) {
+    let map = {}
+    oldChildren.forEach((item, index) => {
+      map[item.key] = index;
+    })
+    return map
+  }
+
+  let map = makeIndexByKey(oldChildren)
+  console.log(123, map);
+
   // 双指针移动, 开始索引小于结尾索引
   while (oldStartIndex <= oldEndIndex && newStartIndex < newEndIndex) {
     // 1. 前端中比较常见的操作有 向头部插入, 向尾部插入, 头部移动到尾部,  尾部移动到头部, 正序和反序
     // 1) 向后插入的操作
-    if (isSameVnode(oldStartVnode, newStartVnode)) { // 比较两个 开始节点
+    if (!oldStartVnode) {
+      oldStartVnode = oldChildren[++oldStartIndex]
+    } else if (!oldEndVnode) {
+      oldEndVnode = oldChildren[--oldEndIndex]
+    } else if (isSameVnode(oldStartVnode, newStartVnode)) { // 比较两个 开始节点
       patch(oldStartVnode, newStartVnode); // 如果是相同节点, patch 递归比较属性或子元素
       oldStartVnode = oldChildren[++oldStartIndex]; // 向后移动一次节点指针
       newStartVnode = newChildren[++newStartIndex]; // 向后移动一次节点指针
@@ -87,6 +102,24 @@ function updateChildren(parent, oldChildren, newChildren) {
       parent.insertBefore(oldStartVnode.el, oldEndVnode.el.nextSibling)// 插入到老的最后一个元素前面
       oldStartVnode = oldChildren[++oldStartIndex]
       newEndVnode = newChildren[--newEndIndex]
+    } else if (isSameVnode(oldEndVnode, newStartVnode)) {
+      patch(oldEndVnode, newStartVnode)
+      parent.insertBefore(oldEndVnode.el, oldStartVnode.el)
+      oldEndVnode = oldChildren[--oldEndIndex]
+      newStartVnode = newChildren[++newStartIndex]
+    } else {
+      // 1. 需要先查找当前老节点索引 和 key 的关系
+      // 移动的时候,通过新的key ,去找对应的老节点 => 获取老节点,可以移动老节点
+      let moveIndex = map[newStartVnode.key]
+      if (moveIndex == undefined) {
+        parent.insertBefore(createElm(newStartVnode), oldStartVnode.el)
+      } else {
+        let moveVnode = oldChildren[moveIndex]
+        oldChildren[moveIndex] = undefined;
+        patch(moveVnode, newStartVnode) // 如果找到了,需要两个虚拟节点比对.
+        parent.insertBefore(moveVnode.el, oldStartVnode.el)
+      }
+      newStartVnode = newChildren[++newStartIndex]
     }
   }
 
@@ -102,7 +135,14 @@ function updateChildren(parent, oldChildren, newChildren) {
       // parent.appendChild(createElm(newChildren[i]))
     }
   }
-
+  if (oldStartIndex <= oldEndIndex) {
+    for (let i = oldStartIndex; i <= oldEndIndex; i++) {
+      let child = oldChildren[i]
+      if (child != undefined) {
+        parent.removeChild(child.el) // 用父亲移除儿子即可.
+      }
+    }
+  }
 }
 
 // 更新节点属性
