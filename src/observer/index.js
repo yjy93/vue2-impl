@@ -54,10 +54,10 @@ function dependArray(value) { // 就是让里层数组收集外层数组的依�
 
 // 拦截 对象中属性,定义成响应式属性
 export function defineReactive(data, key, value) {
-  // value 可能也是一个对象, 重新观测,如果是对象, 则递归观察, 如果不是对象, 则跳出观察, 代码向下执行
+  // value 对应的值可能也是一个对象, 重新观测,如果是对象, 则递归观察, 如果不是对象, 则跳出观察, 代码向下执行
   // 对结果递归拦截
   let childOb = observe(value);
-  let dep = new Dep()// 每次都会给属性创建一个 dep
+  let dep = new Dep()// 每次都会给属性创建一个 dep对象. 即每个属性都有一个dep
   Object.defineProperty(data, key, { // vue2 中数据不要嵌套过深, 过深会浪费性能
     get() { // 需要给每个属性都增加一个 dep
       if (Dep.target) {
@@ -89,13 +89,13 @@ export function observe(data) {
   // 我们需要对这个 数据进行重新定义
   // 只对 对象类型进行观测, 非对象类型无法观测
   if (typeof data !== 'object' || data == null) {
-    return;
+    return; // 如果传入的 data 不是对象, 直接返回不做处理
   }
 
   if (data.__ob__) { // 防止循环引用了
     return
   }
 
-  // 通过类来 实现对数据的观测 类可以方便扩展
+  // 通过类来 实现对数据的观测. 类可以方便扩展
   return new Observer(data)
 }
